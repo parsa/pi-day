@@ -3,37 +3,39 @@
 #include <iterator>
 #include <chrono>
 
-#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/multiprecision/mpfr.hpp>
 
 namespace mp = boost::multiprecision;
-using float_huge = mp::number<mp::cpp_dec_float<14'368>>;
-
-using timer_t = long long;
+using float_huge = mp::number<mp::mpfr_float_backend<10'000'000>>;
+using timer_t = float;
 using std::chrono::high_resolution_clock;
 
+template <typename T>
 struct scoped_timer
 {
-
-    scoped_timer(timer_t& t) : t_(t), start_(high_resolution_clock::now()) { }
+    scoped_timer(T& t) : t_(t), start_(high_resolution_clock::now()) { }
     ~scoped_timer()
     {
-        high_resolution_clock::time_point end = high_resolution_clock::now();
-        auto diff = end - start_;
-        t_ = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+        t_ = std::chrono::duration<T,
+           std::chrono::milliseconds::period>(high_resolution_clock::now() -
+                   start_).count();
     }
 
-    timer_t& t_;
+    T& t_;
     high_resolution_clock::time_point start_;
 };
 
 float_huge pi_gauss_legendre()
 {
     float_huge a = static_cast<float_huge>(1);
-    float_huge b = static_cast<float_huge>(1) / mp::sqrt(static_cast<float_huge>(2));
+    float_huge b = static_cast<float_huge>(1) /
+        mp::sqrt(static_cast<float_huge>(2));
     float_huge t = static_cast<float_huge>(.25);
     float_huge p = static_cast<float_huge>(1);
 
-    for (std::size_t i = 0; i < 1; ++i)
+    for (int correct_digits = 3;
+        correct_digits < std::numeric_limits<float_huge>::digits;
+        correct_digits *= 2)
     {
         float_huge a_n = (a + b) / static_cast<float_huge>(2);
         b = mp::sqrt(a * b);
@@ -51,13 +53,20 @@ int main()
 {
     timer_t t = 0;
     {
-        scoped_timer timer(t);
-        std::cout << "About to run Gauss-Legendre, t is " << t << "(ms)\n";
+        scoped_timer<timer_t> timer(t);
 
-        std::cout << std::setprecision(std::numeric_limits<float_huge>::max_digits10)
+        std::cout <<
+            std::setprecision(std::numeric_limits<float_huge>::max_digits10)
             << "pi = " << pi_gauss_legendre() << '\n';
     }
-    std::cout << "Gauss-Legendre took " << t << "(ms)\n";
+    std::cout << "Gauss-Legendre took " << std::fixed << std::setprecision(4)
+              << t << "(ms)\n";
 
     return 0;
 }
+/*
+Partial Output (Windows, x64, Release, VC 15):
+About to run Gauss-Legendre, t is 0(ms)
+pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062...
+Gauss-Legendre took 6674.4258(ms)
+*/
