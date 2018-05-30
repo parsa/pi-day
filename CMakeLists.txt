@@ -14,5 +14,4 @@ set_target_properties(pi_day PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-target_include_directories(pi_day PRIVATE ${BOOST_INCLUDE_DIRS} ${MPFR_INCLUDES})
-target_link_libraries(pi_day PRIVATE ${BOOST_LIBRARIES} ${MPFR_LIBRARIES})
+target_link_libraries(pi_day PRIVATE Boost::boost mpfr::mpfr)

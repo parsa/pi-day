@@ -7,7 +7,7 @@
 
 namespace mp = boost::multiprecision;
 using float_huge = mp::number<mp::mpfr_float_backend<10'000'000>>;
-using timer_t = float;
+using timer_value_type = float;
 using std::chrono::high_resolution_clock;
 
 template <typename T>
@@ -51,9 +51,9 @@ float_huge pi_gauss_legendre()
 
 int main()
 {
-    timer_t t = 0;
+    timer_value_type t = 0;
     {
-        scoped_timer<timer_t> timer(t);
+        scoped_timer<timer_value_type> timer(t);
 
         std::cout <<
             std::setprecision(std::numeric_limits<float_huge>::max_digits10)
