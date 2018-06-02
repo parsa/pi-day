@@ -6,7 +6,7 @@
 #include <boost/multiprecision/mpfr.hpp>
 
 namespace mp = boost::multiprecision;
-using float_huge = mp::number<mp::mpfr_float_backend<10'000'000>>;
+using float_huge = mp::number<mp::mpfr_float_backend<PRECISION_DIGITS>>;
 using timer_value_type = float;
 using std::chrono::high_resolution_clock;
 
