@@ -1,0 +1,22 @@
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y git cmake libmpfr-dev libboost1.58-dev
+  displayName: 'Install dependencies'
+
+- script: cmake -H. -Bbuild
+  displayName: 'Configure'
+
+- script: cmake --build build
+  displayName: 'Build'
+
+- script: ./build/pi_day
+  displayName: 'Run'
