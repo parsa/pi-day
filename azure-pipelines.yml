@@ -22,23 +22,24 @@ jobs:
 #  
 #  - script: ./build/pi_day
 #    displayName: 'Run'
-- job: BuildUbuntu18_04Image
+#- job: BuildUbuntu18_04Image
+#  pool:
+#    vmImage: 'Ubuntu-16.04'
+#
+#  steps:
+##  - script: |
+##      sudo apt-get update
+
+- job: RunOnUbuntu18_04Container
+#  dependsOn: BuildUbuntu18_04Image
   pool:
     vmImage: 'Ubuntu-16.04'
 
-  steps:
-#  - script: |
-#      sudo apt-get update
   - script: |
       echo 'FROM ubuntu:18.04' >Dockerfile
       echo 'RUN apt-get update && apt-get install -y git cmake libmpfr-dev libboost1.62-dev' >>Dockerfile
       docker build -t pi_day .
     displayName: 'Build Image'
-
-- job: RunOnUbuntu18_04Container
-  dependsOn: BuildUbuntu18_04Image
-  pool:
-    vmImage: 'Ubuntu-16.04'
 
   container: pi_day  # ubuntu:18.04
   
