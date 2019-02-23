@@ -22,3 +22,24 @@ jobs:
   
   - script: ./build/pi_day
     displayName: 'Run'
+
+- job: RunOnUbuntu18_04Container
+  pool:
+    vmImage: 'Ubuntu-16.04'
+
+  container: ubuntu:18.04
+  
+  steps:
+  - script: |
+      apt-get update
+      apt-get install -y git cmake libmpfr-dev libboost1.62-dev
+    displayName: 'Install dependencies'
+  
+  - script: cmake -H. -Bbuild
+    displayName: 'Configure'
+  
+  - script: cmake --build build
+    displayName: 'Build'
+  
+  - script: ./build/pi_day
+    displayName: 'Run'
