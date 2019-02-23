@@ -46,3 +46,24 @@ jobs:
   
   - script: ./build/pi_day
     displayName: 'Run'
+
+- job: RunOnMacOS
+  pool:
+    vmImage: 'macOS-10.13'
+
+  steps:
+  - script: |
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    displayName: 'Install Homebrew'
+  
+  - script: brew install git cmake mpfr boost
+    displayName: 'Install dependencies'
+  
+  - script: cmake -H. -Bbuild
+    displayName: 'Configure'
+  
+  - script: cmake --build build
+    displayName: 'Build'
+  
+  - script: ./build/pi_day
+    displayName: 'Run'
