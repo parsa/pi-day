@@ -3,33 +3,35 @@ if(NOT MPFR_ROOT)
     find_package(PkgConfig)
     pkg_check_modules(MPFR QUIET mpfr)
 
-    # Resolve the names of the libraries
-    foreach(i ${MPFR_LIBRARIES})
-        find_library(MPFR_${i}_ABS
-            NAMES ${i}
-            PATHS ${MPFR_LIBDIR}
+    if(MPFR_FOUND)
+        # Resolve the names of the libraries
+        foreach(i ${MPFR_LIBRARIES})
+            find_library(MPFR_${i}_ABS
+                NAMES ${i}
+                PATHS ${MPFR_LIBDIR}
+            )
+            list(APPEND MPFR_LIBRARIES_ABS ${MPFR_${i}_ABS})
+        endforeach()
+
+        include(FindPackageHandleStandardArgs)
+        mark_as_advanced(MPFR_FOUND MPFR_INCLUDEDIR MPFR_INCLUDE_DIRS
+            MPFR_LIBDIR MPFR_LIBRARIES MPFR_LIBRARY_DIRS MPFR_PREFIX
+            MPFR_VERSION MPFR_LIBRARIES_ABS
         )
-        list(APPEND MPFR_LIBRARIES_ABS ${MPFR_${i}_ABS})
-    endforeach()
 
-    include(FindPackageHandleStandardArgs)
-    mark_as_advanced(MPFR_FOUND MPFR_INCLUDEDIR MPFR_INCLUDE_DIRS
-        MPFR_LIBDIR MPFR_LIBRARIES MPFR_LIBRARY_DIRS MPFR_PREFIX
-        MPFR_VERSION MPFR_LIBRARIES_ABS
-    )
-
-    find_package_handle_standard_args(MPFR
-        FOUND_VAR MPFR_FOUND
-        REQUIRED_VARS MPFR_INCLUDE_DIRS MPFR_LIBRARY_DIRS
-        VERSION_VAR MPFR_VERSION)
+        find_package_handle_standard_args(MPFR
+            FOUND_VAR MPFR_FOUND
+            REQUIRED_VARS MPFR_INCLUDE_DIRS MPFR_LIBRARY_DIRS
+            VERSION_VAR MPFR_VERSION)
 
 
-    if(MPFR_FOUND AND NOT TARGET mpfr::mpfr)
-        add_library(mpfr::mpfr INTERFACE IMPORTED)
-        set_target_properties(mpfr::mpfr PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES "${MPFR_INCLUDE_DIRS}"
-            INTERFACE_LINK_LIBRARIES "${MPFR_LIBRARIES_ABS}"
-        )
+        if(NOT TARGET mpfr::mpfr)
+            add_library(mpfr::mpfr INTERFACE IMPORTED)
+            set_target_properties(mpfr::mpfr PROPERTIES
+                INTERFACE_INCLUDE_DIRECTORIES "${MPFR_INCLUDE_DIRS}"
+                INTERFACE_LINK_LIBRARIES "${MPFR_LIBRARIES_ABS}"
+            )
+        endif()
     endif()
 endif()
 if(NOT MPFR_FOUND)
