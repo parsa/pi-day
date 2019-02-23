@@ -4,39 +4,52 @@ trigger:
 - master
 
 jobs:
-- job: RunOnUbuntu16_04
+#- job: RunOnUbuntu16_04
+#  pool:
+#    vmImage: 'Ubuntu-16.04'
+#  
+#  steps:
+#  - script: |
+#      sudo apt-get update
+#      sudo apt-get install -y git cmake libmpfr-dev libboost1.58-dev
+#    displayName: 'Install dependencies'
+#  
+#  - script: cmake -H. -Bbuild
+#    displayName: 'Configure'
+#  
+#  - script: cmake --build build
+#    displayName: 'Build'
+#  
+#  - script: ./build/pi_day
+#    displayName: 'Run'
+- job: BuildUbuntu18_04Image
   pool:
     vmImage: 'Ubuntu-16.04'
-  
+
   steps:
+#  - script: |
+#      sudo apt-get update
   - script: |
-      sudo apt-get update
-      sudo apt-get install -y git cmake libmpfr-dev libboost1.58-dev
-    displayName: 'Install dependencies'
-  
-  - script: cmake -H. -Bbuild
-    displayName: 'Configure'
-  
-  - script: cmake --build build
-    displayName: 'Build'
-  
-  - script: ./build/pi_day
-    displayName: 'Run'
+      echo 'FROM ubuntu:18.04' >Dockerfile
+      echo 'RUN apt-get update && apt-get install -y git cmake libmpfr-dev libboost1.62-dev' >>Dockerfile
+      docker build -t pi_day .
+    displayName: 'Build Image'
 
 - job: RunOnUbuntu18_04Container
+  dependsOn: BuildUbuntu18_04Image
   pool:
     vmImage: 'Ubuntu-16.04'
 
-  container: ubuntu:18.04
+  container: pi_day  # ubuntu:18.04
   
   steps:
-  - script: |
-      su -c 'apt-get update' </dev/null
-      su -c 'apt-get install -y sudo' </dev/null
-    displayName: 'Install sudo'
-  
-  - script: sudo apt-get install -y git cmake libmpfr-dev libboost1.62-dev
-    displayName: 'Install dependencies'
+#- script: |
+#    su -c 'apt-get update' </dev/null
+#    su -c 'apt-get install -y sudo' </dev/null
+#  displayName: 'Install sudo'
+
+#- script: sudo apt-get install -y git cmake libmpfr-dev libboost1.62-dev
+#  displayName: 'Install dependencies'
   
   - script: cmake -H. -Bbuild
     displayName: 'Configure'
@@ -47,23 +60,23 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
-- job: RunOnMacOS
-  pool:
-    vmImage: 'macOS-10.13'
-
-  steps:
-  - script: |
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    displayName: 'Install Homebrew'
-  
-  - script: brew install git cmake mpfr boost
-    displayName: 'Install dependencies'
-  
-  - script: cmake -H. -Bbuild
-    displayName: 'Configure'
-  
-  - script: cmake --build build
-    displayName: 'Build'
-  
-  - script: ./build/pi_day
-    displayName: 'Run'
+#- job: RunOnMacOS
+#  pool:
+#    vmImage: 'macOS-10.13'  # 'vs2017-win2016'
+#
+#  steps:
+#  - script: |
+#      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+#    displayName: 'Install Homebrew'
+#  
+#  - script: brew install git cmake mpfr boost
+#    displayName: 'Install dependencies'
+#  
+#  - script: cmake -H. -Bbuild
+#    displayName: 'Configure'
+#  
+#  - script: cmake --build build
+#    displayName: 'Build'
+#  
+#  - script: ./build/pi_day
+#    displayName: 'Run'
