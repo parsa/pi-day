@@ -4,80 +4,109 @@ trigger:
 - master
 
 jobs:
-#- job: RunOnUbuntu16_04
-#  pool:
-#    vmImage: 'Ubuntu-16.04'
-#  
-#  steps:
-#  - script: |
-#      sudo apt-get update
-#      sudo apt-get install -y git cmake libmpfr-dev libboost1.58-dev
-#    displayName: 'Install dependencies'
-#  
-#  - script: cmake -H. -Bbuild
-#    displayName: 'Configure'
-#  
-#  - script: cmake --build build
-#    displayName: 'Build'
-#  
-#  - script: ./build/pi_day
-#    displayName: 'Run'
+- job: RunOnUbuntu16_04
+  pool:
+    vmImage: 'Ubuntu-16.04'
+
+  steps:
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y git cmake libmpfr-dev libboost1.58-dev
+    displayName: 'Install dependencies'
+
+  - script: cmake -H. -Bbuild
+    displayName: 'Configure'
+
+  - script: cmake --build build
+    displayName: 'Build'
+
+  - script: ./build/pi_day
+    displayName: 'Run'
 #- job: BuildUbuntu18_04Image
 #  pool:
 #    vmImage: 'Ubuntu-16.04'
 #
 #  steps:
-##  - script: |
-##      sudo apt-get update
-
-- job: RunOnUbuntu18_04Container
-#  dependsOn: BuildUbuntu18_04Image
-  pool:
-    vmImage: 'Ubuntu-16.04'
-
-  - script: |
-      echo 'FROM ubuntu:18.04' >Dockerfile
-      echo 'RUN apt-get update && apt-get install -y git cmake libmpfr-dev libboost1.62-dev' >>Dockerfile
-      docker build -t pi_day .
-    displayName: 'Build Image'
-
-  container: pi_day  # ubuntu:18.04
-  
-  steps:
+#
+#- job: RunOnUbuntu18_04Container
+#  pool:
+#    vmImage: 'Ubuntu-16.04'
+#
+#  - script: |
+#      echo 'FROM ubuntu:18.04' >Dockerfile
+#      echo 'RUN apt-get update && apt-get install -y git cmake libmpfr-dev libboost1.62-dev' >>Dockerfile
+#      docker build -t pi_day .
+#    displayName: 'Build Image'
+#
+#  container: pi_day  # ubuntu:18.04
+#
+#  steps:
 #- script: |
 #    su -c 'apt-get update' </dev/null
 #    su -c 'apt-get install -y sudo' </dev/null
 #  displayName: 'Install sudo'
-
+#
 #- script: sudo apt-get install -y git cmake libmpfr-dev libboost1.62-dev
 #  displayName: 'Install dependencies'
-  
+#
+#  - script: cmake -H. -Bbuild
+#    displayName: 'Configure'
+#
+#  - script: cmake --build build
+#    displayName: 'Build'
+#
+#  - script: ./build/pi_day
+#    displayName: 'Run'
+
+- job: RunOnMacOS
+  pool:
+    vmImage: 'macOS-10.13'  # 'vs2017-win2016'
+
+  steps:
+  - script: |
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    displayName: 'Install Homebrew'
+
+  - script: brew install git cmake mpfr boost
+    displayName: 'Install dependencies'
+
   - script: cmake -H. -Bbuild
     displayName: 'Configure'
-  
+
   - script: cmake --build build
     displayName: 'Build'
-  
+
   - script: ./build/pi_day
     displayName: 'Run'
 
-#- job: RunOnMacOS
-#  pool:
-#    vmImage: 'macOS-10.13'  # 'vs2017-win2016'
-#
-#  steps:
-#  - script: |
-#      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-#    displayName: 'Install Homebrew'
-#  
-#  - script: brew install git cmake mpfr boost
-#    displayName: 'Install dependencies'
-#  
-#  - script: cmake -H. -Bbuild
-#    displayName: 'Configure'
-#  
-#  - script: cmake --build build
-#    displayName: 'Build'
-#  
-#  - script: ./build/pi_day
-#    displayName: 'Run'
+- job: RunOnWinVS17
+  pool:
+    vmImage: 'vs2017-win2016'
+
+  steps:
+  - script: git clone --depth=1 https://github.com/Microsoft/vcpkg.git
+    displayName: 'Install Vcpkg'
+
+  - script: .\vcpkg\bootstrap-vcpkg.bat
+    displayName: 'Bootstrap vcpkg'
+
+  - script: .\vcpkg\vcpkg.exe install boost-multiprecision:x64-windows mpfr:x64-windows
+    displayName: 'Install Dependencies'
+
+  - script: .\vcpkg\vcpkg.exe export boost-multiprecision:x64-windows mpfr:x64-windows --7zip --nuget
+    displayName: 'Install Dependencies'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: 'vcpkg'
+      artifactName: vcpkg-workdir
+
+  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
+    displayName: 'Configure'
+
+  - script: cmake --build build --config Release
+    displayName: 'Build'
+
+  - script: .\build\Release\pi-day.exe
+    displayName: 'Run'
+
