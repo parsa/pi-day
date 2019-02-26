@@ -22,7 +22,7 @@ jobs:
 
   - script: ./build/pi_day
     displayName: 'Run'
-- job: RunOnUbuntu18_04Container
+- job: RunOnClang8Container
   pool:
     vmImage: 'Ubuntu-16.04'
 
@@ -76,9 +76,15 @@ jobs:
   - script: .\vcpkg\vcpkg.exe export boost-multiprecision:x64-windows mpfr:x64-windows --7zip --nuget
     displayName: 'Install Dependencies'
 
+  - script: \
+      md artifacts
+      move vcpkg-export-*.7z artifacts
+      move vcpkg-export-*.nupkg artifacts
+    displayName: 'Collect Vcpkg exports'
+
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: 'vcpkg'
+      pathtoPublish: 'artifacts'
       artifactName: vcpkg-workdir
 
   - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
