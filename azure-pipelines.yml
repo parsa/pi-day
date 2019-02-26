@@ -1,7 +1,9 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  branches:
+    include:
+    - '*'
 
 jobs:
 - job: RunOnUbuntu16_04
@@ -76,7 +78,7 @@ jobs:
   - script: .\vcpkg\vcpkg.exe export boost-multiprecision:x64-windows mpfr:x64-windows --7zip --nuget
     displayName: 'Install Dependencies'
 
-  - script: \
+  - script: |
       md artifacts
       move vcpkg-export-*.7z artifacts
       move vcpkg-export-*.nupkg artifacts
