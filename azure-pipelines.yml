@@ -2,8 +2,10 @@
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema>
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops>
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/index?view=azure-devops>
-#  List of Microsoft-hosted images
+#  List of Microsoft-hosted images:
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml>
+# Azure Pipelines hosted macOS image:
+# <https://github.com/Microsoft/azure-pipelines-image-generation/blob/master/images/macos/macos-Readme.md>
 # <https://aka.ms/yaml>
 
 ################################################################################
@@ -56,10 +58,6 @@ jobs:
     vmImage: 'macOS-10.13'
 
   steps:
-  - script: |
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    displayName: 'Install Homebrew'
-
   - script: brew install mpfr boost
     displayName: 'Install dependencies'
 
@@ -72,20 +70,20 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
-################################################################################
-- job: RunOnWinVS17Container
-  pool:
-    vmImage: 'win1803'
-
-  container: prsam/pi-day:msvc-win1803
-
-  steps:
-  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
-    displayName: 'Configure'
-
-  - script: cmake --build build --config Release
-    displayName: 'Build'
-
-  - script: .\build\Release\pi-day.exe
-    displayName: 'Run'
+#################################################################################
+#- job: RunOnWinVS17Container
+#  pool:
+#    vmImage: 'win1803'
+#
+#  container: prsam/pi-day:msvc-win1803
+#
+#  steps:
+#  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
+#    displayName: 'Configure'
+#
+#  - script: cmake --build build --config Release
+#    displayName: 'Build'
+#
+#  - script: .\build\Release\pi-day.exe
+#    displayName: 'Run'
 
