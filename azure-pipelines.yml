@@ -65,31 +65,10 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
 
+  container: prsam/pi-day:msvc-win1709
+
   steps:
-  - script: git clone --depth=1 https://github.com/Microsoft/vcpkg.git
-    displayName: 'Install Vcpkg'
-
-  - script: .\vcpkg\bootstrap-vcpkg.bat
-    displayName: 'Bootstrap vcpkg'
-
-  - script: .\vcpkg\vcpkg.exe install boost-multiprecision:x64-windows mpfr:x64-windows
-    displayName: 'Install Dependencies'
-
-  - script: .\vcpkg\vcpkg.exe export boost-multiprecision:x64-windows mpfr:x64-windows --7zip --nuget
-    displayName: 'Install Dependencies'
-
-  - script: |
-      md artifacts
-      move vcpkg-export-*.7z artifacts
-      move vcpkg-export-*.nupkg artifacts
-    displayName: 'Collect Vcpkg exports'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: 'artifacts'
-      artifactName: vcpkg-workdir
-
-  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
+  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
     displayName: 'Configure'
 
   - script: cmake --build build --config Release
