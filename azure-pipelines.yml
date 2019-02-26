@@ -94,6 +94,7 @@ jobs:
   - script: .\build\Release\pi_day.exe
     displayName: 'Run'
 
+# NOTE: Kept here for reference. Too slow to use. Never actually succeeded.
 #################################################################################
 #- job: RunOnWinVS17Container
 #  pool:
