@@ -1,7 +1,7 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <iterator>
-#include <chrono>
 
 #include <boost/multiprecision/mpfr.hpp>
 
@@ -13,7 +13,7 @@ using std::chrono::high_resolution_clock;
 template <typename T>
 struct scoped_timer
 {
-    scoped_timer(T& t) : t_(t), start_(high_resolution_clock::now()) { }
+    explicit scoped_timer(T& t) : t_(t), start_(high_resolution_clock::now()) { }
     ~scoped_timer()
     {
         t_ = std::chrono::duration<T,
@@ -21,6 +21,7 @@ struct scoped_timer
                    start_).count();
     }
 
+private:
     T& t_;
     high_resolution_clock::time_point start_;
 };
@@ -39,8 +40,8 @@ float_huge pi_gauss_legendre()
     {
         float_huge a_n = (a + b) / static_cast<float_huge>(2);
         b = mp::sqrt(a * b);
-        t = t - p * mp::pow(a - a_n, static_cast<float_huge>(2));
-        p = static_cast<float_huge>(2) * p;
+        t -= p * mp::pow(a - a_n, static_cast<float_huge>(2));
+        p *= static_cast<float_huge>(2);
         a = a_n;
     }
 
