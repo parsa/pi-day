@@ -91,7 +91,7 @@ jobs:
   - script: cmake --build build --config Release
     displayName: 'Build'
 
-  - script: .\build\Release\pi-day.exe
+  - script: .\build\Release\pi_day.exe
     displayName: 'Run'
 
 #################################################################################
@@ -108,6 +108,6 @@ jobs:
 #  - script: cmake --build build --config Release
 #    displayName: 'Build'
 #
-#  - script: .\build\Release\pi-day.exe
+#  - script: .\build\Release\pi_day.exe
 #    displayName: 'Run'
 
