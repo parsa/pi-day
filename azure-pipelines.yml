@@ -22,41 +22,21 @@ jobs:
 
   - script: ./build/pi_day
     displayName: 'Run'
-#- job: BuildUbuntu18_04Image
-#  pool:
-#    vmImage: 'Ubuntu-16.04'
-#
-#  steps:
-#
-#- job: RunOnUbuntu18_04Container
-#  pool:
-#    vmImage: 'Ubuntu-16.04'
-#
-#  - script: |
-#      echo 'FROM ubuntu:18.04' >Dockerfile
-#      echo 'RUN apt-get update && apt-get install -y git cmake libmpfr-dev libboost1.62-dev' >>Dockerfile
-#      docker build -t pi_day .
-#    displayName: 'Build Image'
-#
-#  container: pi_day  # ubuntu:18.04
-#
-#  steps:
-#- script: |
-#    su -c 'apt-get update' </dev/null
-#    su -c 'apt-get install -y sudo' </dev/null
-#  displayName: 'Install sudo'
-#
-#- script: sudo apt-get install -y git cmake libmpfr-dev libboost1.62-dev
-#  displayName: 'Install dependencies'
-#
-#  - script: cmake -H. -Bbuild
-#    displayName: 'Configure'
-#
-#  - script: cmake --build build
-#    displayName: 'Build'
-#
-#  - script: ./build/pi_day
-#    displayName: 'Run'
+- job: RunOnUbuntu18_04Container
+  pool:
+    vmImage: 'Ubuntu-16.04'
+
+  container: prsam/pi-day:llvm8-stretch
+
+  steps:
+  - script: cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPI_DIGITS=1000000
+    displayName: 'Configure'
+
+  - script: cmake --build build
+    displayName: 'Build'
+
+  - script: ./build/pi_day
+    displayName: 'Run'
 
 - job: RunOnMacOS
   pool:
@@ -67,7 +47,7 @@ jobs:
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     displayName: 'Install Homebrew'
 
-  - script: brew install git cmake mpfr boost
+  - script: brew install mpfr boost
     displayName: 'Install dependencies'
 
   - script: cmake -H. -Bbuild
