@@ -76,7 +76,7 @@ jobs:
     vmImage: 'vs2017-win2016'
 
   steps:
-  - powershell: Invoke-WebRequest -Uri "https://www.dropbox.com/s/x1nftn7cegosfvn/vcpkg-bmp-mpfr.7z?dl=0" -OutFile "vcpkg-bmp-mpfr.7z"
+  - powershell: Invoke-WebRequest -Uri "https://dl.dropboxusercontent.com/s/x1nftn7cegosfvn/vcpkg-bmp-mpfr.7z" -OutFile "vcpkg-bmp-mpfr.7z"
     displayName: 'Download Vcpkg'
 
   - task: ExtractFiles@1
