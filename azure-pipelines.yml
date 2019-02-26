@@ -1,4 +1,8 @@
-# https://aka.ms/yaml
+## References
+# <https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema>
+# <https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops>
+# <https://docs.microsoft.com/en-us/azure/devops/pipelines/index?view=azure-devops>
+# <https://aka.ms/yaml>
 
 trigger:
   branches:
@@ -6,7 +10,7 @@ trigger:
     - '*'
 
 jobs:
-- job: RunOnUbuntu16_04
+- job: RunOnXenialVM
   pool:
     vmImage: 'Ubuntu-16.04'
 
@@ -24,7 +28,7 @@ jobs:
 
   - script: ./build/pi_day
     displayName: 'Run'
-- job: RunOnClang8Container
+- job: RunOnClang8StretchContainer
   pool:
     vmImage: 'Ubuntu-16.04'
 
@@ -40,7 +44,7 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
-- job: RunOnMacOS
+- job: RunOnMacOSVM
   pool:
     vmImage: 'macOS-10.13'  # 'vs2017-win2016'
 
@@ -61,11 +65,11 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
-- job: RunOnWinVS17
+- job: RunOnWinVS17Container
   pool:
     vmImage: 'vs2017-win2016'
 
-  container: prsam/pi-day:msvc-win1709
+  container: prsam/pi-day:msvc-win1803
 
   steps:
   - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
