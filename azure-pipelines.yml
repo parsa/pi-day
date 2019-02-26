@@ -83,6 +83,7 @@ jobs:
     inputs:
       archiveFilePatterns: 'vcpkg-bmp-mpfr.7z' 
       destinationFolder: C:\
+      cleanDestinationFolder: false
   
   - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
     displayName: 'Configure'
