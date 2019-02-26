@@ -75,6 +75,9 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
 
+  # Vcpkg install builds from source every time and is slow. I had to host the
+  # exported Vcpkg archive somewhere. I couldn't think of a better alternative
+  # to Dropbox.
   steps:
   - powershell: Invoke-WebRequest -Uri "https://dl.dropboxusercontent.com/s/x1nftn7cegosfvn/vcpkg-bmp-mpfr.7z" -OutFile "vcpkg-bmp-mpfr.7z"
     displayName: 'Download Vcpkg Exported Archive'
