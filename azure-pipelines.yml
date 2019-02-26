@@ -18,7 +18,7 @@ trigger:
 jobs:
 - job: RunOnXenialVM
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'ubuntu-16.04'
 
   steps:
   - script: |
@@ -38,7 +38,7 @@ jobs:
 ################################################################################
 - job: RunOnClang8StretchContainer
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'ubuntu-16.04'
 
   container: prsam/pi-day:llvm8-stretch
 
@@ -68,6 +68,29 @@ jobs:
     displayName: 'Build'
 
   - script: ./build/pi_day
+    displayName: 'Run'
+
+################################################################################
+- job: RunOnWinVS17VM
+  pool:
+    vmImage: 'vs2017-win2016'
+
+  steps:
+  - powershell: Invoke-WebRequest -Uri "https://www.dropbox.com/s/x1nftn7cegosfvn/vcpkg-bmp-mpfr.7z?dl=0" -OutFile "vcpkg-bmp-mpfr.7z"
+    displayName: 'Download Vcpkg'
+
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: 'vcpkg-bmp-mpfr.7z' 
+      destinationFolder: C:\
+  
+  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
+    displayName: 'Configure'
+
+  - script: cmake --build build --config Release
+    displayName: 'Build'
+
+  - script: .\build\Release\pi-day.exe
     displayName: 'Run'
 
 #################################################################################
