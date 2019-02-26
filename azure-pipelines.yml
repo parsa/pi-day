@@ -2,13 +2,17 @@
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema>
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops>
 # <https://docs.microsoft.com/en-us/azure/devops/pipelines/index?view=azure-devops>
+#  List of Microsoft-hosted images
+# <https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml>
 # <https://aka.ms/yaml>
 
+################################################################################
 trigger:
   branches:
     include:
     - '*'
 
+################################################################################
 jobs:
 - job: RunOnXenialVM
   pool:
@@ -28,6 +32,8 @@ jobs:
 
   - script: ./build/pi_day
     displayName: 'Run'
+    
+################################################################################
 - job: RunOnClang8StretchContainer
   pool:
     vmImage: 'Ubuntu-16.04'
@@ -44,9 +50,10 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
+################################################################################
 - job: RunOnMacOSVM
   pool:
-    vmImage: 'macOS-10.13'  # 'vs2017-win2016'
+    vmImage: 'macOS-10.13'
 
   steps:
   - script: |
@@ -65,9 +72,10 @@ jobs:
   - script: ./build/pi_day
     displayName: 'Run'
 
+################################################################################
 - job: RunOnWinVS17Container
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'win1803'
 
   container: prsam/pi-day:msvc-win1803
 
