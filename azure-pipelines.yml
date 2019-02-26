@@ -82,10 +82,10 @@ jobs:
   - task: ExtractFiles@1
     inputs:
       archiveFilePatterns: 'vcpkg-bmp-mpfr.7z' 
-      destinationFolder: C:\pkg
+      destinationFolder: C:\p
       cleanDestinationFolder: false
   
-  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/pkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
+  - script: cmake -H. -Bbuild -DCMAKE_TOOLCHAIN_FILE=C:/p/vcpkg/scripts/buildsystems/vcpkg.cmake -G"Visual Studio 15 2017 Win64"
     displayName: 'Configure'
 
   - script: cmake --build build --config Release
